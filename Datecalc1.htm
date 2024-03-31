@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week Calculator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+    }
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        text-align: center;
+    }
+    label {
+        font-weight: bold;
+    }
+    input[type="date"] {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    #weeksContainer {
+        margin-top: 20px;
+    }
+    .monthDivider {
+        margin-top: 20px;
+        border-top: 2px solid #ccc;
+    }
+    .monthName {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .currentWeek {
+        background-color: #ffffcc; /* Light yellow */
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Week Calculator</h2>
+    <label for="dateInput">Enter a date:</label>
+    <input type="date" id="dateInput">
+    <button onclick="calculateWeeks()">Calculate</button>
+    <div id="weeksContainer"></div>
+</div>
+
+<script>
+    document.getElementById("dateInput").addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            calculateWeeks();
+        }
+    });
+
+    function calculateWeeks() {
+        var dateInput = document.getElementById("dateInput").value;
+        var startDate = new Date(dateInput);
+        var weeksContainer = document.getElementById("weeksContainer");
+        weeksContainer.innerHTML = "";
+
+        var currentMonth = startDate.getMonth();
+        var isFirstMonth = true;
+        var currentDate = new Date();
+
+        for (var i = 0; i < 26; i++) {
+            var weekStartDateString = startDate.toDateString();
+            startDate.setDate(startDate.getDate() + 6); // Set end of the week
+            var endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000); // Set end date to the next day
+            var weekEndDateString = endDate.toDateString();
+            var weekNumber = i + 1;
+            var weekText = "Week " + weekNumber + ": " + weekStartDateString + " - " + weekEndDateString;
+
+            var weekElement = document.createElement("p");
+            weekElement.textContent = weekText;
+
+            // Check if the month has changed
+            if (startDate.getMonth() !== currentMonth || isFirstMonth) {
+                currentMonth = startDate.getMonth();
+                isFirstMonth = false;
+                
+                // Add month divider and name
+                var monthDivider = document.createElement("div");
+                monthDivider.classList.add("monthDivider");
+                weeksContainer.appendChild(monthDivider);
+                var monthName = document.createElement("div");
+                monthName.classList.add("monthName");
+                monthName.textContent = startDate.toLocaleString('default', { month: 'long' });
+                weeksContainer.appendChild(monthName);
+            }
+
+            // Highlight the week if it belongs to the current date
+            if (currentDate >= new Date(weekStartDateString) && currentDate <= new Date(weekEndDateString)) {
+                weekElement.classList.add("currentWeek");
+            }
+
+            weeksContainer.appendChild(weekElement);
+
+            startDate.setDate(startDate.getDate() + 1); // Move to the next week's start date
+        }
+    }
+</script>
+</body>
+</html>
